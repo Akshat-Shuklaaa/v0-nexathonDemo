@@ -1,11 +1,11 @@
 "use client"
 
 import { Code, Lightbulb, Users, Trophy, Zap, Globe } from "lucide-react"
-import SectionHeader from "./section-header"
-import ScrollAnimation from "./scroll-animation"
-import ContactCTA from "./contact-cta"
-import TiltCard from "./tilt-card"
-import AnimatedCounter from "./animated-counter"
+import SectionHeader from "@/components/features/section-header"
+import ScrollAnimation from "@/components/features/scroll-animation"
+import ContactCTA from "@/components/features/contact-cta"
+import TiltCard from "@/components/features/tilt-card"
+import AnimatedCounter from "@/components/features/animated-counter"
 
 const features = [
   {

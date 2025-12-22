@@ -3,9 +3,9 @@
 import type React from "react"
 import { useState } from "react"
 import { Mail, Phone, MapPin, Send, MessageSquare, Instagram, Twitter, Linkedin, Github, Sparkles } from "lucide-react"
-import SectionHeader from "./section-header"
-import ScrollAnimation from "./scroll-animation"
-import TiltCard from "./tilt-card"
+import SectionHeader from "@/components/features/section-header"
+import ScrollAnimation from "@/components/features/scroll-animation"
+import TiltCard from "@/components/features/tilt-card"
 
 const contactInfo = [
   {

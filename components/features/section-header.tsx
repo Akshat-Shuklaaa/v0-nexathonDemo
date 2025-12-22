@@ -1,4 +1,4 @@
-import ScrollAnimation from "./scroll-animation"
+import ScrollAnimation from "@/components/features/scroll-animation"
 
 interface SectionHeaderProps {
   title: string

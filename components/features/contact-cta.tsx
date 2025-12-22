@@ -1,6 +1,6 @@
 import { MessageCircle, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import ScrollAnimation from "./scroll-animation"
+import ScrollAnimation from "@/components/features/scroll-animation"
 
 export default function ContactCTA() {
   return (

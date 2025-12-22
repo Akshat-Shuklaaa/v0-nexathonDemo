@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react"
 import { Calendar, MapPin, Users, Terminal, Sparkles } from "lucide-react"
 import Link from "next/link"
-import FloatingParticles from "./floating-particles"
-import { ShaderAnimation } from "./ui/shader-animation"
+import FloatingParticles from "@/components/features/floating-particles"
+import { ShaderAnimation } from "@/components/ui/shader-animation"
 
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false)

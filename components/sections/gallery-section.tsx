@@ -1,8 +1,8 @@
 "use client"
 
-import SectionHeader from "./section-header"
-import ScrollAnimation from "./scroll-animation"
-import ContactCTA from "./contact-cta"
+import SectionHeader from "@/components/features/section-header"
+import ScrollAnimation from "@/components/features/scroll-animation"
+import ContactCTA from "@/components/features/contact-cta"
 
 const galleryImages = [
   { src: "/hackathon-coding-event-with-laptops.jpg", alt: "Coding Session" },

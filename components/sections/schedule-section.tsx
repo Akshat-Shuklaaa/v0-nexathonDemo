@@ -1,10 +1,10 @@
 "use client"
 
 import { Calendar, Clock, MapPin, Coffee, Code, Presentation, Award } from "lucide-react"
-import SectionHeader from "./section-header"
-import ScrollAnimation from "./scroll-animation"
-import ContactCTA from "./contact-cta"
-import TiltCard from "./tilt-card"
+import SectionHeader from "@/components/features/section-header"
+import ScrollAnimation from "@/components/features/scroll-animation"
+import ContactCTA from "@/components/features/contact-cta"
+import TiltCard from "@/components/features/tilt-card"
 
 const scheduleData = [
   {

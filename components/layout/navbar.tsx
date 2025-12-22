@@ -1,32 +1,27 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, Terminal } from "lucide-react"
+import { Menu, X, Terminal, Moon, Sun } from "lucide-react"
 import Link from "next/link"
-
-const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "#schedule", label: "Schedule" },
-  { href: "#timeline", label: "Timeline" },
-  { href: "#sponsors", label: "Sponsors" },
-  { href: "#rewards", label: "Rewards" },
-  { href: "#register", label: "Register" },
-  { href: "#themes", label: "Themes" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#gallery", label: "Gallery" },
-  { href: "#contact", label: "Contact" },
-]
+import { useTheme } from "next-themes"
+import { navigationData } from "@/lib/data"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState("")
+  const [mounted, setMounted] = useState(false)
+  const { theme, setTheme } = useTheme()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
 
-      const sections = navLinks.map((link) => link.href.replace("#", ""))
+      const sections = navigationData.links.map((link) => link.href.replace("#", ""))
       for (const section of sections.reverse()) {
         const element = document.getElementById(section)
         if (element && element.getBoundingClientRect().top <= 100) {
@@ -57,12 +52,12 @@ export default function Navbar() {
               </span>
             </div>
             <span className="font-[var(--font-orbitron)] text-lg md:text-xl font-bold text-foreground hidden sm:block">
-              NEXA<span className="text-primary">THON</span>
+              {navigationData.logo.text}<span className="text-primary">{navigationData.logo.subtitle}</span>
             </span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
+            {navigationData.links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -82,23 +77,50 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2.5 rounded-lg bg-muted/50 hover:bg-muted text-foreground hover:text-primary transition-all duration-300 hover:scale-105 border border-border hover:border-primary/50"
+              aria-label="Toggle theme"
+            >
+              {mounted && theme === "dark" ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
+
             <Link
               href="#register"
-              className="px-6 py-2.5 bg-primary text-primary-foreground font-[var(--font-rajdhani)] font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 hover:shadow-[0_0_25px_oklch(0.78_0.22_145/0.4)] hover:scale-105"
+              className="px-6 py-2.5 bg-primary text-primary-foreground font-[var(--font-rajdhani)] font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 hover:shadow-[0_0_25px_oklch(0.65_0.25_250/0.4)] hover:scale-105"
             >
               Register Now
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Menu Button & Theme Toggle */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2 rounded-lg bg-muted/50 hover:bg-muted text-foreground hover:text-primary transition-all duration-300"
+              aria-label="Toggle theme"
+            >
+              {mounted && theme === "dark" ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
+
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 text-foreground hover:text-primary transition-colors"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -108,7 +130,7 @@ export default function Navbar() {
         }`}
       >
         <div className="bg-card/95 backdrop-blur-xl border-t border-border/50 px-4 py-6 space-y-1">
-          {navLinks.map((link, index) => (
+          {navigationData.links.map((link, index) => (
             <Link
               key={link.href}
               href={link.href}

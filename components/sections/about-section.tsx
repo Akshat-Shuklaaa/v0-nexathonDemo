@@ -6,39 +6,7 @@ import ScrollAnimation from "@/components/features/scroll-animation"
 import ContactCTA from "@/components/features/contact-cta"
 import TiltCard from "@/components/features/tilt-card"
 import AnimatedCounter from "@/components/features/animated-counter"
-
-const features = [
-  {
-    icon: Code,
-    title: "36 Hours of Coding",
-    description: "Non-stop coding marathon to build innovative solutions",
-  },
-  {
-    icon: Lightbulb,
-    title: "Innovation Hub",
-    description: "Transform your ideas into reality with expert mentorship",
-  },
-  {
-    icon: Users,
-    title: "Team Collaboration",
-    description: "Network with 500+ developers, designers, and innovators",
-  },
-  {
-    icon: Trophy,
-    title: "Amazing Prizes",
-    description: "Win prizes worth ₹5,00,000+ across multiple categories",
-  },
-  {
-    icon: Zap,
-    title: "Workshops & Sessions",
-    description: "Learn from industry experts through hands-on workshops",
-  },
-  {
-    icon: Globe,
-    title: "Global Impact",
-    description: "Build solutions that can make a difference worldwide",
-  },
-]
+import { aboutData } from "@/lib/data"
 
 export default function AboutSection() {
   return (
@@ -48,36 +16,28 @@ export default function AboutSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="About NEXATHON"
-          subtitle="The ultimate playground for tech enthusiasts to innovate, collaborate, and create the future"
-          highlight="// ABOUT US"
+          title={aboutData.title}
+          subtitle={aboutData.subtitle}
+          highlight={aboutData.highlight}
         />
 
         <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center mb-20">
           {/* Left content */}
           <ScrollAnimation delay={100} variant="slide-right">
             <div className="space-y-6">
-              <p className="font-[var(--font-sans)] text-muted-foreground leading-relaxed text-lg">
-                NEXATHON is not just a hackathon—{"it's"} a movement. We bring together the brightest minds from across
-                the nation to solve real-world problems through technology and innovation.
-              </p>
-              <p className="font-[var(--font-sans)] text-muted-foreground leading-relaxed">
-                Whether {"you're"} a seasoned developer, a creative designer, or a first-time hacker, NEXATHON provides
-                the perfect platform to showcase your skills, learn new technologies, and build connections that last a
-                lifetime.
-              </p>
+              {aboutData.description.map((paragraph, index) => (
+                <p key={index} className="font-[var(--font-sans)] text-muted-foreground leading-relaxed text-lg">
+                  {paragraph}
+                </p>
+              ))}
               <div className="flex flex-wrap gap-4 pt-4">
-                {[
-                  { value: 500, suffix: "+", label: "Participants" },
-                  { value: 50, suffix: "+", label: "Mentors" },
-                  { value: 36, suffix: "", label: "Hours" },
-                ].map((stat) => (
+                {aboutData.stats.map((stat) => (
                   <TiltCard key={stat.label} tiltAmount={10} className="group">
-                    <div className="px-5 py-3 bg-card/50 border border-border hover:border-primary/50 rounded-xl transition-all duration-300">
+                    <div className="px-5 py-3 bg-card/50 border border-border hover:border-primary/50 rounded-xl transition-all duration-500">
                       <AnimatedCounter
                         end={stat.value}
                         suffix={stat.suffix}
-                        className="font-[var(--font-orbitron)] text-primary font-bold text-xl group-hover:glow-text transition-all"
+                        className="font-[var(--font-orbitron)] text-primary font-bold text-xl group-hover:glow-text transition-all duration-300"
                       />
                       <span className="font-[var(--font-rajdhani)] text-muted-foreground ml-2">{stat.label}</span>
                     </div>
@@ -134,14 +94,14 @@ export default function AboutSection() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
+          {aboutData.features.map((feature, index) => (
             <ScrollAnimation key={feature.title} delay={100 * (index + 1)}>
               <TiltCard tiltAmount={8} className="h-full">
-                <div className="group h-full p-6 bg-card/40 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/40 transition-all duration-500 hover:shadow-[0_0_40px_oklch(0.78_0.22_145/0.15)]">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <div className="group h-full p-6 bg-card/40 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/40 transition-all duration-500 hover:shadow-[0_0_40px_oklch(0.65_0.25_250/0.15)]">
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                     <feature.icon className="w-7 h-7 text-primary" />
                   </div>
-                  <h3 className="font-[var(--font-rajdhani)] text-xl font-bold text-foreground mb-3">
+                  <h3 className="font-[var(--font-rajdhani)] text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="font-[var(--font-sans)] text-sm text-muted-foreground leading-relaxed">

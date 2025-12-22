@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 export default function MatrixBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [isLowPerformance, setIsLowPerformance] = useState(false)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
@@ -22,8 +23,13 @@ export default function MatrixBackground() {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const ctx = canvas.getContext("2d")
+    const ctx = canvas.getContext("2d", { alpha: false })
     if (!ctx) return
+
+    // Detect low-end devices
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const isLowEnd = isMobile || navigator.hardwareConcurrency <= 2
+    setIsLowPerformance(isLowEnd)
 
     const resize = () => {
       canvas.width = window.innerWidth
@@ -31,33 +37,47 @@ export default function MatrixBackground() {
     }
     resize()
 
-    const chars =
-      "ネクサソンアイウエオカキクケコ01サシスセソタチツテト10ナニヌネノハヒフヘホ<>{}[]マミムメモヤユヨラリルレロワヲン"
+    const chars = "01"
     const charArray = chars.split("")
-    const fontSize = 16
+    const fontSize = isLowEnd ? 20 : 16
     const columns = Math.floor(canvas.width / fontSize)
 
     const drops: number[] = []
     const speeds: number[] = []
     const opacities: number[] = []
 
-    for (let i = 0; i < columns; i++) {
+    // Reduce number of columns on low-end devices
+    const activeColumns = isLowEnd ? Math.floor(columns * 0.5) : columns
+
+    for (let i = 0; i < activeColumns; i++) {
       drops[i] = Math.random() * -100
       speeds[i] = 0.5 + Math.random() * 0.5
       opacities[i] = 0.1 + Math.random() * 0.2
     }
 
     let animationId: number
+    let lastTime = 0
+    const targetFPS = isLowEnd ? 30 : 60
+    const frameInterval = 1000 / targetFPS
 
-    const draw = () => {
+    const draw = (currentTime: number) => {
+      const deltaTime = currentTime - lastTime
+
+      if (deltaTime < frameInterval) {
+        animationId = requestAnimationFrame(draw)
+        return
+      }
+
+      lastTime = currentTime - (deltaTime % frameInterval)
+
       ctx.fillStyle = "rgba(6, 12, 6, 0.08)"
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      ctx.font = `${fontSize}px "JetBrains Mono", monospace`
+      ctx.font = `${fontSize}px monospace`
 
       for (let i = 0; i < drops.length; i++) {
         const text = charArray[Math.floor(Math.random() * charArray.length)]
-        const x = i * fontSize
+        const x = i * fontSize * (isLowEnd ? 2 : 1)
         const y = drops[i] * fontSize
 
         const brightness = 0.3 + opacities[i] * 0.7
@@ -68,9 +88,11 @@ export default function MatrixBackground() {
           ctx.fillStyle = `rgba(180, 255, 220, ${brightness})`
           ctx.fillText(text, x, y)
 
-          // Trail effect
-          ctx.fillStyle = `rgba(0, 255, 136, ${opacities[i] * 0.6})`
-          ctx.fillText(charArray[Math.floor(Math.random() * charArray.length)], x, y - fontSize)
+          // Trail effect (skip on low-end devices)
+          if (!isLowEnd) {
+            ctx.fillStyle = `rgba(0, 255, 136, ${opacities[i] * 0.6})`
+            ctx.fillText(charArray[Math.floor(Math.random() * charArray.length)], x, y - fontSize)
+          }
         }
 
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
@@ -83,18 +105,17 @@ export default function MatrixBackground() {
       animationId = requestAnimationFrame(draw)
     }
 
-    const throttledDraw = () => {
-      draw()
+    animationId = requestAnimationFrame(draw)
+
+    const handleResize = () => {
+      resize()
     }
 
-    const interval = setInterval(throttledDraw, 40)
-
-    window.addEventListener("resize", resize)
+    window.addEventListener("resize", handleResize)
 
     return () => {
-      clearInterval(interval)
       cancelAnimationFrame(animationId)
-      window.removeEventListener("resize", resize)
+      window.removeEventListener("resize", handleResize)
     }
   }, [prefersReducedMotion])
 
@@ -104,5 +125,11 @@ export default function MatrixBackground() {
     )
   }
 
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none opacity-40 z-0" />
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none opacity-30 z-0"
+      aria-hidden="true"
+    />
+  )
 }

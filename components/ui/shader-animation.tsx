@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
 
 interface ShaderAnimationProps {
@@ -16,9 +16,18 @@ export function ShaderAnimation({ className = "" }: ShaderAnimationProps) {
     uniforms: any
     animationId: number
   } | null>(null)
+  const [isLowPerformance, setIsLowPerformance] = useState(false)
 
   useEffect(() => {
     if (!containerRef.current) return
+
+    // Detect low-end devices
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const isLowEnd = isMobile || navigator.hardwareConcurrency <= 2
+    setIsLowPerformance(isLowEnd)
+
+    // Skip Three.js on low-end devices
+    if (isLowEnd) return
 
     const container = containerRef.current
 
@@ -29,12 +38,12 @@ export function ShaderAnimation({ className = "" }: ShaderAnimationProps) {
       }
     `
 
-    // Fragment shader - customized with green/cyan colors for NEXATHON theme
+    // Fragment shader - optimized with fewer iterations
     const fragmentShader = `
       #define TWO_PI 6.2831853072
       #define PI 3.14159265359
 
-      precision highp float;
+      precision mediump float;
       uniform vec2 resolution;
       uniform float time;
 
@@ -44,16 +53,14 @@ export function ShaderAnimation({ className = "" }: ShaderAnimationProps) {
         float lineWidth = 0.002;
 
         vec3 color = vec3(0.0);
-        // Green channel (primary)
-        for(int i=0; i < 5; i++){
+        // Reduced iterations for better performance
+        for(int i=0; i < 3; i++){
           color.g += lineWidth*float(i*i) / abs(fract(t + float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
         }
-        // Cyan/blue channel
-        for(int i=0; i < 5; i++){
+        for(int i=0; i < 3; i++){
           color.b += lineWidth*float(i*i)*0.6 / abs(fract(t - 0.02 + float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
         }
-        // Slight red for accent
-        for(int i=0; i < 3; i++){
+        for(int i=0; i < 2; i++){
           color.r += lineWidth*float(i*i)*0.2 / abs(fract(t + 0.01 + float(i)*0.015)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
         }
         
@@ -82,8 +89,12 @@ export function ShaderAnimation({ className = "" }: ShaderAnimationProps) {
     const mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-    renderer.setPixelRatio(window.devicePixelRatio)
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: false, 
+      alpha: true,
+      powerPreference: "high-performance"
+    })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
     renderer.setClearColor(0x000000, 0)
 
     container.appendChild(renderer.domElement)
@@ -101,9 +112,23 @@ export function ShaderAnimation({ className = "" }: ShaderAnimationProps) {
     onWindowResize()
     window.addEventListener("resize", onWindowResize, false)
 
-    // Animation loop
-    const animate = () => {
+    // Animation loop with frame limiting
+    let lastTime = 0
+    const targetFPS = 30
+    const frameInterval = 1000 / targetFPS
+
+    const animate = (currentTime: number) => {
       const animationId = requestAnimationFrame(animate)
+      
+      const deltaTime = currentTime - lastTime
+      if (deltaTime < frameInterval) {
+        if (sceneRef.current) {
+          sceneRef.current.animationId = animationId
+        }
+        return
+      }
+
+      lastTime = currentTime - (deltaTime % frameInterval)
       uniforms.time.value += 0.05
       renderer.render(scene, camera)
 
@@ -122,7 +147,7 @@ export function ShaderAnimation({ className = "" }: ShaderAnimationProps) {
     }
 
     // Start animation
-    animate()
+    requestAnimationFrame(animate)
 
     // Cleanup function
     return () => {
@@ -141,6 +166,19 @@ export function ShaderAnimation({ className = "" }: ShaderAnimationProps) {
       }
     }
   }, [])
+
+  // Fallback for low-end devices
+  if (isLowPerformance) {
+    return (
+      <div
+        className={`w-full h-full ${className}`}
+        style={{
+          background: "radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 70%)",
+          overflow: "hidden",
+        }}
+      />
+    )
+  }
 
   return (
     <div

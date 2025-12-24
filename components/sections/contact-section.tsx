@@ -8,6 +8,47 @@ import ScrollAnimation from "@/components/features/scroll-animation"
 import TiltCard from "@/components/features/tilt-card"
 import Image from "next/image"
 
+interface ContactCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  value: React.ReactNode;
+  link: string;
+  isPhone?: boolean;
+}
+
+const ContactCard = ({ icon: Icon, title, value, link, isPhone = false }: ContactCardProps) => {
+  const content = (
+    <>
+      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+        <Icon className="w-6 h-6 text-primary" />
+      </div>
+      <div>
+        <h4 className="text-sm font-medium text-muted-foreground">{title}</h4>
+        <div className="font-[var(--font-rajdhani)] font-bold text-lg">{value}</div>
+      </div>
+    </>
+  );
+
+  if (isPhone) {
+    return (
+      <div className="group flex items-center gap-4 p-4 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all duration-300 hover:shadow-primary/10">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-center gap-4 p-4 bg-card border border-border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all duration-300 hover:shadow-primary/10"
+    >
+      {content}
+    </a>
+  );
+};
+
 const contactInfo = [
   {
     icon: Mail,
@@ -18,8 +59,14 @@ const contactInfo = [
   {
     icon: Phone,
     title: "Call Us",
-    value: "+91 98765 43210",
-    link: "tel:+919876543210",
+    value: (
+      <div className="flex flex-col gap-1">
+        <a href="tel:+919555401204" className="hover:underline hover:text-primary">+91 95554 01204</a>
+        <a href="tel:+917002998267" className="hover:underline hover:text-primary">+91 70029 98267</a>
+      </div>
+    ),
+    link: "#",
+    isPhone: true,
   },
   {
     icon: MapPin,
@@ -126,18 +173,13 @@ export default function ContactSection() {
               <div className="space-y-4">
                 {contactInfo.map((info, index) => (
                   <TiltCard key={info.title} tiltAmount={10}>
-                    <a
-                      href={info.link}
-                      className="group flex items-center gap-4 p-4 bg-card border border-border rounded-xl hover:border-primary/50 transition-all duration-500 hover:shadow-[0_0_30px_oklch(0.78_0.22_145/0.15)]"
-                    >
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                        <info.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-[var(--font-rajdhani)] font-semibold text-foreground">{info.title}</h4>
-                        <p className="font-[var(--font-sans)] text-sm text-muted-foreground">{info.value}</p>
-                      </div>
-                    </a>
+                    <ContactCard
+                      icon={info.icon}
+                      title={info.title}
+                      value={info.value}
+                      link={info.link}
+                      isPhone={info.isPhone}
+                    />
                   </TiltCard>
                 ))}
               </div>
@@ -163,7 +205,7 @@ export default function ContactSection() {
               </div>
 
               {/* College Logo Placeholder with float animation */}
-              <div className="flex items-center gap-4 pt-4">
+              {/* <div className="flex items-center gap-4 pt-4">
                 <div className="w-16 h-16 border border-dashed border-primary/50 rounded-lg flex items-center justify-center float-3d hover:border-primary transition-colors">
                   <Image src="/VIT_COLOURED.png" alt="College Logo" width={64} height={64} className="w-16 h-16 object-contain" />
                 </div>
@@ -173,7 +215,7 @@ export default function ContactSection() {
                 >
                   <Image src="/logo.png" alt="College Logo" width={64} height={64} className="w-16 h-16 object-contain" />
                 </div>
-              </div>
+              </div> */}
             </div>
           </ScrollAnimation>
 

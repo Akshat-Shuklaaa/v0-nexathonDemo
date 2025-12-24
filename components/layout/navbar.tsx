@@ -69,12 +69,14 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="#register"
+            <a
+              href="https://eventhubcc.vit.ac.in/EventHub/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-6 py-2.5 bg-primary text-primary-foreground font-[var(--font-rajdhani)] font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 hover:shadow-[0_0_25px_oklch(0.65_0.25_250/0.4)] hover:scale-105"
             >
               Register Now
-            </Link>
+            </a>
           </div>
 
           {/* Mobile Menu Button - Removed Theme Toggle */}
@@ -109,13 +111,15 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="#register"
+          <a
+            href="https://eventhubcc.vit.ac.in/EventHub/"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => setIsOpen(false)}
             className="block px-4 py-3 bg-primary text-primary-foreground font-[var(--font-rajdhani)] font-semibold rounded-lg text-center mt-4"
           >
             Register Now
-          </Link>
+          </a>
         </div>
       </div>
     </nav>

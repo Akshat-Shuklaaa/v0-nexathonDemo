@@ -2,7 +2,7 @@
 
 import SectionHeader from "@/components/features/section-header"
 import ScrollAnimation from "@/components/features/scroll-animation"
-import ContactCTA from "@/components/features/contact-cta"
+import {ContactCTA} from "@/components/features/contact-cta"
 
 const galleryImages = [
   { src: "/img6.jpg", alt: "Coding Session" },
